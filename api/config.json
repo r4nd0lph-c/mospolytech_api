@@ -1,8 +1,9 @@
 {
     "urls": {
-        "main": "https://rasp.dmami.ru/",
-        "group_list": "groups-list.json",
-        "schedule": ""
+        "referer": "https://rasp.dmami.ru/",
+        "groups": "https://rasp.dmami.ru/groups-list.json",
+        "students": "https://e.mospolytech.ru/old/lk_api_mapp.php",
+        "schedule": "https://rasp.dmami.ru/site/group-html"
     },
     "hash_salt": "}{YWHksld#52673$3*9dNG"
 }

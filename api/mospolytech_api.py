@@ -5,7 +5,7 @@
 # ██║╚██╔╝██║██║   ██║╚════██║██╔═══╝ ██║   ██║██║    ╚██╔╝     ██║   ██╔══╝  ██║     ██╔══██║    ██╔══██║██╔═══╝ ██║ #
 # ██║ ╚═╝ ██║╚██████╔╝███████║██║     ╚██████╔╝███████╗██║      ██║   ███████╗╚██████╗██║  ██║    ██║  ██║██║     ██║ #
 # ╚═╝     ╚═╝ ╚═════╝ ╚══════╝╚═╝      ╚═════╝ ╚══════╝╚═╝      ╚═╝   ╚══════╝ ╚═════╝╚═╝  ╚═╝    ╚═╝  ╚═╝╚═╝     ╚═╝ #
-# author: https://t.me/rand0lphc                                                                          version 2.0 #
+# author: https://t.me/rand0lphc                                                                          version 2.1 #
 # ------------------------------------------------------------------------------------------------------------------- #
 
 
@@ -13,24 +13,27 @@ from hashlib import md5
 import json
 
 import requests
+import bs4
 from bs4 import BeautifulSoup as bs
 
 
 class API:
     """
-        DESCRIPTION
-            * API for working with the services of the Moscow Polytechnic University;
-            * https://mospolytech.ru/;
+    DESCRIPTION
+        * API for working with the services of the Moscow Polytechnic University;
+        * https://mospolytech.ru/;
 
-        ATTRIBUTES
-            * there are no public attributes;
+    ATTRIBUTES
+        * there are no public attributes;
 
-        ARGS
-            * (optional) user_agent (str): string that lets servers identify the application,
-            default is __DEFAULT_USER_AGENT;
+    ARGS
+        * (optional) user_agent (str): string that lets servers identify the application,
+        default is __DEFAULT_USER_AGENT;
 
-        METHODS
-            * get_group_names(self) -> list;
+    METHODS
+        * def get_groups() -> list[str];
+        * def get_students(list_groups: list = []) -> list;
+        * def get_shedule(group: str) -> dict;
     """
 
     # private attributes for API operation
@@ -57,7 +60,7 @@ class API:
 
         # setting headers
         self.headers = {
-            "referer": self.__CONFIG["urls"]["main"],
+            "referer": self.__CONFIG["urls"]["referer"],
             "user-agent": user_agent
         }
 
@@ -83,29 +86,29 @@ class API:
                 f"Expected status code 200, but got {code}."
             )
 
-    def __create_group_token(self, group_name: str) -> str:
+    def __create_token(self, group: str) -> str:
         """
         DESCRIPTION
-            * creates a token (md5 hash-string) for the given group name;
+            * creates a token (md5 hash-string) for the given group;
 
         ARGS
-            * (required) group_name (str): name of the group;
+            * (required) group (str): name of the group;
 
         RETURNS
-            * token (str): token for the given group name;
+            * token (str): token for the given group;
 
         ERRORS
             * there are no custom errors;
         """
 
         # creating token (hash object)
-        string = group_name + self.__CONFIG["hash_salt"]
+        string = group + self.__CONFIG["hash_salt"]
         token = md5(md5(string.encode()).hexdigest().encode())
 
         # returning created token (str object)
         return token.hexdigest()
 
-    def get_group_names(self) -> list[str]:
+    def get_groups(self) -> list[str]:
         """
         DESCRIPTION
             * returns a list of group names;
@@ -114,15 +117,14 @@ class API:
             * there are no args;
 
         RETURNS
-            * group_names (list[str]): list of group names that are existing;
+            * groups (list[str]): list of group names that are existing;
 
         ERRORS
             * ConnectionError(): if there is a problem with the connection;
         """
 
         # making request
-        r_url = self.__CONFIG["urls"]["main"] + \
-            self.__CONFIG["urls"]["group_list"]
+        r_url = self.__CONFIG["urls"]["groups"]
         r = requests.get(url=r_url, headers=self.headers)
 
         # checking status code
@@ -134,15 +136,105 @@ class API:
         # returning sorted list of group names
         return sorted([name for name in data["groups"]])
 
-    def get_shedule(self, group_name: str) -> dict:
+    def get_students(self, list_groups: list = []) -> list:
+        """
+        DESCRIPTION
+            * returns a list of students for the given groups;
+
+        ARGS
+            * (required) list_groups (list[str]): list of group names;
+
+        RETURNS
+            * students (list[str]): list of of students for the given groups;
+
+        ERRORS
+            * ConnectionError(): if there is a problem with the connection;
+        """
+
+        # forming group names list
+        if not list_groups:
+            list_groups = self.get_groups()
+
+        # creating list of students
+        list_students = []
+
+        # getting students
+        for group in list_groups:
+
+            # creating token (str object)
+            token = self.__create_token(group)
+
+            # making request
+            r_url = self.__CONFIG["urls"]["students"] + \
+                f"?group={group.replace(' ', '%20')}&token={token}"
+            r = requests.get(url=r_url, headers=self.headers)
+            content = r.content.decode("utf-8")
+
+            # checking status code
+            self.__check_status_code(r.status_code)
+
+            # loading content to list of students
+            list_students += json.loads(content)
+
+        return sorted(list_students)
+
+    def get_shedule(self, group: str) -> dict:
         """
         ...
         """
 
-        pass
+        def is_permanent(div_schedule: bs4.element.Tag) -> bool:
+            """
+            ...
+            """
+
+            # parsing schedule title
+            title = div_schedule.find_all(
+                "div", {"class": "schedule-day__title"}
+            )[0].text
+
+            # getting title.split() length
+            # == 1: schedule without specific dates
+            # != 1: schedule with specific dates
+            length = len(title.split())
+
+            # returning bool value: is permanent
+            return True if length == 1 else False
+
+        # creating token (str object)
+        token = self.__create_token(group)
+
+        # making request
+        r_url = self.__CONFIG["urls"]["schedule"] + \
+            f"?group={group.replace(' ', '%20')}&token={token}"
+        r = requests.get(url=r_url, headers=self.headers)
+        content = r.content.decode("utf-8")
+
+        # checking status code
+        self.__check_status_code(r.status_code)
+
+        # checking correctness of schedule
+        NULL_SCHEDULE_CONTENT = "Еще не готово расписание для группы"
+        if content == NULL_SCHEDULE_CONTENT:
+            raise ValueError(
+                f"The schedule for the '{group}' group does not exist."
+            )
+        soup = bs(content, features="html.parser")
+        div_schedule = soup.find_all("div", {"class": "schedule-week"})[0]
+        div_days = div_schedule.find_all("div", {"class": "schedule-day"})
+        if not div_days:
+            raise ValueError(
+                f"The schedule for the '{group}' group is empty."
+            )
+
+        # creating raw schedule
+        schedule = {}
+
+        # returnig raw schedule
+        return schedule
 
 
 if __name__ == "__main__":
     m_api = API()
-    list_gn = m_api.get_group_names()
-    print(list_gn)
+
+    # 201-721 | 183-211 | 215-632 | 206-999
