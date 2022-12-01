@@ -32,8 +32,8 @@ class API:
 
     METHODS
         * def get_groups() -> list[str];
-        * def get_students(list_groups: list = []) -> list;
-        * def get_shedule(group: str) -> dict;
+        * def get_students(list_groups: list = []) -> list[str];
+        * def get_schedule(group: str) -> dict;
     """
 
     # private attributes for API operation
@@ -50,6 +50,7 @@ class API:
         ARGS
             * (optional) user_agent (str): string that lets servers identify the application,
             default is __DEFAULT_USER_AGENT;
+
 
         RETURNS
             * there are no return;
@@ -117,7 +118,7 @@ class API:
             * there are no args;
 
         RETURNS
-            * groups (list[str]): list of group names that are existing;
+            * groups (list[str]): sorted list of group names that are existing;
 
         ERRORS
             * ConnectionError(): if there is a problem with the connection;
@@ -136,16 +137,17 @@ class API:
         # returning sorted list of group names
         return sorted([name for name in data["groups"]])
 
-    def get_students(self, list_groups: list = []) -> list:
+    def get_students(self, list_groups: list = []) -> list[str]:
         """
         DESCRIPTION
             * returns a list of students for the given groups;
 
         ARGS
-            * (required) list_groups (list[str]): list of group names;
+            * (optional) list_groups (list[str]): list of group names,
+            default is [] - search across all groups;
 
         RETURNS
-            * students (list[str]): list of of students for the given groups;
+            * students (list[str]): sorted list of students for the given groups;
 
         ERRORS
             * ConnectionError(): if there is a problem with the connection;
@@ -178,7 +180,7 @@ class API:
 
         return sorted(list_students)
 
-    def get_shedule(self, group: str) -> dict:
+    def get_schedule(self, group: str) -> dict:
         """
         ...
         """
@@ -229,6 +231,8 @@ class API:
 
         # creating raw schedule
         schedule = {}
+        for div_day in div_days:
+            day = {}
 
         # returnig raw schedule
         return schedule
@@ -238,3 +242,5 @@ if __name__ == "__main__":
     m_api = API()
 
     # 201-721 | 183-211 | 215-632 | 206-999
+    schedule = m_api.get_schedule("201-721")
+    print(schedule)
