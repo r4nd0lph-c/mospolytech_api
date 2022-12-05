@@ -5,7 +5,7 @@
 # ██║╚██╔╝██║██║   ██║╚════██║██╔═══╝ ██║   ██║██║    ╚██╔╝     ██║   ██╔══╝  ██║     ██╔══██║    ██╔══██║██╔═══╝ ██║ #
 # ██║ ╚═╝ ██║╚██████╔╝███████║██║     ╚██████╔╝███████╗██║      ██║   ███████╗╚██████╗██║  ██║    ██║  ██║██║     ██║ #
 # ╚═╝     ╚═╝ ╚═════╝ ╚══════╝╚═╝      ╚═════╝ ╚══════╝╚═╝      ╚═╝   ╚══════╝ ╚═════╝╚═╝  ╚═╝    ╚═╝  ╚═╝╚═╝     ╚═╝ #
-# author: https://t.me/rand0lphc                                                                          version 2.1 #
+# author: https://t.me/rand0lphc                                                                          version 2.2 #
 # ------------------------------------------------------------------------------------------------------------------- #
 
 
@@ -15,6 +15,25 @@ import json
 import requests
 import bs4
 from bs4 import BeautifulSoup as bs
+
+
+class DatetimeToolbox:
+    """
+    ...
+    """
+
+    __LOCALE_DATES = {
+        "Янв": "", "Фев": "", "Мар": "", "Апр": "",
+        "Май": "", "Июн": "", "Июл": "", "Авг": "",
+        "Сен": "", "Окт": "", "Ноя": "", "Дек": ""
+    }
+
+    def __init__(self) -> None:
+        """
+        ...
+        """
+
+        pass
 
 
 class API:
@@ -39,7 +58,7 @@ class API:
     # private attributes for API operation
     __DEFAULT_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) " \
                            "Chrome/86.0.4240.75 Safari/537.36"
-    with open("config.json", "r", encoding="utf-8") as config_file:
+    with open("api/config.json", "r", encoding="utf-8") as config_file:
         __CONFIG = json.load(config_file)
 
     def __init__(self, user_agent: str = __DEFAULT_USER_AGENT) -> None:
@@ -203,6 +222,16 @@ class API:
             # returning bool value: is permanent
             return True if length == 1 else False
 
+        def str_clear(s: str) -> str:
+            """
+            ...
+            """
+
+            if not (ord(s[0].lower()) in range(ord("а"), ord("я") + 1)):
+                s = s[1:]
+            s = s.replace("_", "")
+            return s.strip()
+
         # creating token (str object)
         token = self.__create_token(group)
 
@@ -215,24 +244,68 @@ class API:
         # checking status code
         self.__check_status_code(r.status_code)
 
-        # checking correctness of schedule
+        # checking correctness of schedule (1)
         NULL_SCHEDULE_CONTENT = "Еще не готово расписание для группы"
         if content == NULL_SCHEDULE_CONTENT:
             raise ValueError(
                 f"The schedule for the '{group}' group does not exist."
             )
+
+        # getting scedule (div block) & list of days (div blocks)
         soup = bs(content, features="html.parser")
-        div_schedule = soup.find_all("div", {"class": "schedule-week"})[0]
+        div_schedule = soup.find("div", {"class": "schedule-week"})
         div_days = div_schedule.find_all("div", {"class": "schedule-day"})
+
+        # checking correctness of schedule (2)
         if not div_days:
             raise ValueError(
                 f"The schedule for the '{group}' group is empty."
             )
 
         # creating raw schedule
-        schedule = {}
-        for div_day in div_days:
-            day = {}
+        schedule = {
+            "group": group,
+            "grid": None,
+            "dates": None,
+            "is_permanent": is_permanent(div_schedule)
+        }
+
+        # creating permanent (True) schedule
+        if schedule["is_permanent"]:
+            # filling grid
+            grid = []
+            for div_day in div_days:
+                day = []
+                div_pairs = div_day.find("div", {"class": "pairs"}).find_all(
+                    "div", {"class": "pair"})
+                for div_pair in div_pairs:
+                    pair = {
+                        "time": [t.strip() for t in div_pair.find("div", {"class": "time"}).text.split("-")],
+                        "subjects": None
+                    }
+                    subjects = []
+                    div_lessons = div_pair.find("div", {"class": "lessons"}).find_all(
+                        "div", {"class": "schedule-lesson"})
+                    for div_lesson in div_lessons:
+                        raw_texts = div_lesson.find(
+                            "div", {"class": "bold small"}
+                        ).text.split("(")
+                        sbj = {
+                            "title":  raw_texts[0].split("(")[0].strip(),
+                            "type": raw_texts[-1][:-1].strip(),
+                            "teachers": [t.strip() for t in div_lesson.find("div", {"class": "teacher small"}).text.split(",")],
+                            "location": [str_clear(l.text) for l in div_lesson.find_all("div", {"class": "schedule-auditory"})],
+                            "dates": [d.strip() for d in div_lesson.find("div", {"class": "schedule-dates"}).text.split("-")]
+                        }
+                        subjects.append(sbj)
+                    pair["subjects"] = subjects
+                    day.append(pair)
+                grid.append(day)
+            schedule["grid"] = grid
+
+        # creating permanent (False) schedule
+        else:
+            pass
 
         # returnig raw schedule
         return schedule
@@ -243,4 +316,6 @@ if __name__ == "__main__":
 
     # 201-721 | 183-211 | 215-632 | 206-999
     schedule = m_api.get_schedule("201-721")
-    print(schedule)
+    # print(schedule)
+    with open("logs.json", "w", encoding="utf-8") as f:
+        json.dump(schedule, f, ensure_ascii=False, indent=4)
