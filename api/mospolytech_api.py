@@ -11,43 +11,10 @@
 
 import json
 from hashlib import md5
-import re
-from datetime import datetime
 
 import requests
 import bs4
 from bs4 import BeautifulSoup as bs
-
-
-class DatetimeToolbox:
-    """
-    ...
-    """
-
-    __LOCALE_DATES = {
-        "Янв": "Jan", "Фев": "Feb", "Мар": "Mar", "Апр": "Apr",
-        "Май": "May", "Июн": "Jun", "Июл": "Jul", "Авг": "Aug",
-        "Сен": "Sep", "Окт": "Oct", "Ноя": "Nov", "Дек": "Dec"
-    }
-
-    def __init__(self) -> None:
-        """
-        ...
-        """
-
-        pass
-
-    def dm_normalize(self, dm: str) -> str:
-        """
-        ...
-        """
-
-        d, m = dm.split(" ")
-        if m in self.__LOCALE_DATES.keys():
-            m = self.__LOCALE_DATES[m]
-        m = "{:02d}".format(datetime.strptime(m, "%b").month)
-
-        return f"{d}.{m}"
 
 
 class API:
@@ -66,7 +33,7 @@ class API:
     METHODS
         * def get_groups() -> list[str];
         * def get_students(list_groups: list = []) -> list[str];
-        * def get_schedule(group: str) -> dict;
+        * get_schedule(group: str, timestamps: bool = True) -> dict;
     """
 
     # private attributes for API operation
@@ -170,6 +137,7 @@ class API:
         # returning sorted list of group names
         return sorted([name for name in data["groups"]])
 
+    # TODO: change list_groups: list = [] to list_groups: list = None
     def get_students(self, list_groups: list = []) -> list[str]:
         """
         DESCRIPTION
@@ -213,124 +181,70 @@ class API:
 
         return sorted(list_students)
 
-    def get_schedule(self, group: str) -> dict:
+    def get_schedule(self, group: str, timestamps: bool = True) -> dict:
         """
         ...
         """
 
-        def is_permanent(div_schedule: bs4.element.Tag) -> bool:
+        def schedule_type():
             """
             ...
             """
 
-            # parsing schedule title
-            title = div_schedule.find_all(
-                "div", {"class": "schedule-day__title"}
-            )[0].text
+            pass
 
-            # getting title.split() length
-            # == 1: schedule without specific dates
-            # != 1: schedule with specific dates
-            length = len(title.split())
-
-            # returning bool value: is permanent
-            return True if length == 1 else False
-
-        def str_clear(s: str) -> str:
+        def get_timestamps():
             """
             ...
             """
 
-            # removing emojis
-            regrex_pattern = re.compile(
-                pattern="["
-                u"\U0001F600-\U0001F64F"  # emoticons
-                u"\U0001F300-\U0001F5FF"  # symbols & pictographs
-                u"\U0001F680-\U0001F6FF"  # transport & map symbols
-                u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
-                "]+", flags=re.UNICODE
-            )
+            pass
 
-            # returning clean string
-            return regrex_pattern.sub(r'', s)
+        def merge():
+            """
+            ...
+            """
 
-        # creating token (str object)
-        token = self.__create_token(group)
+            pass
 
         # making request
-        r_url = self.__CONFIG["urls"]["schedule"] + \
-            f"?group={group.replace(' ', '%20')}&token={token}"
+        r_url = self.__CONFIG["urls"]["referer"] + \
+            "site/group?group=" + group.replace(" ", "%20")
         r = requests.get(url=r_url, headers=self.headers)
-        content = r.content.decode("utf-8")
 
         # checking status code
         self.__check_status_code(r.status_code)
 
+        # decoding content
+        content = r.content.decode("utf-8")
+
         # checking correctness of schedule (1)
-        NULL_SCHEDULE_CONTENT = "Еще не готово расписание для группы"
-        if content == NULL_SCHEDULE_CONTENT:
+        SCHEDULE_NOT_EXIST = "Еще не готово расписание для группы"
+        if content == SCHEDULE_NOT_EXIST:
             raise ValueError(
                 f"The schedule for the '{group}' group does not exist."
             )
 
-        # getting scedule (div block) & list of days (div blocks)
-        soup = bs(content, features="html.parser")
-        div_schedule = soup.find("div", {"class": "schedule-week"})
-        div_days = div_schedule.find_all("div", {"class": "schedule-day"})
+        # loading content to dict
+        data = json.loads(content)
 
         # checking correctness of schedule (2)
-        if not div_days:
-            raise ValueError(
-                f"The schedule for the '{group}' group is empty."
-            )
+        SCHEDULE_EMPTY = "Не нашлось расписание для группы"
+        if "message" in data:
+            if data["message"] == SCHEDULE_EMPTY:
+                raise ValueError(
+                    f"The schedule for the '{group}' group is empty."
+                )
 
         # creating raw schedule
+        dates = [data["group"]["dateFrom"], data["group"]["dateTo"]]
         schedule = {
             "group": group,
             "grid": None,
-            "dates": None,
-            "is_permanent": is_permanent(div_schedule)
+            "dates": [".".join(d.split("-")[::-1]) for d in dates],
         }
-
-        # creating permanent (True) schedule
-        if schedule["is_permanent"]:
-            # filling grid
-            grid = []
-            for div_day in div_days:
-                day = []
-                div_pairs = div_day.find("div", {"class": "pairs"}).find_all(
-                    "div", {"class": "pair"})
-                for div_pair in div_pairs:
-                    pair = {
-                        "time": [t.strip() for t in div_pair.find("div", {"class": "time"}).text.split("-")],
-                        "subjects": None
-                    }
-                    subjects = []
-                    div_lessons = div_pair.find("div", {"class": "lessons"}).find_all(
-                        "div", {"class": "schedule-lesson"})
-                    for div_lesson in div_lessons:
-                        raw_texts = div_lesson.find(
-                            "div", {"class": "bold small"}
-                        ).text.split("(")
-                        raw_dates = [d.strip() for d in div_lesson.find(
-                            "div", {"class": "schedule-dates"}).text.split("-")]
-                        sbj = {
-                            "title":  raw_texts[0].split("(")[0].strip(),
-                            "type": raw_texts[-1][:-1].strip(),
-                            "teachers": [t.strip() for t in div_lesson.find("div", {"class": "teacher small"}).text.split(",")],
-                            "location": [str_clear(l.text) for l in div_lesson.find_all("div", {"class": "schedule-auditory"})],
-                            "dates": [f"{DatetimeToolbox().dm_normalize(d)}.{datetime.today().year}" for d in raw_dates]
-                        }
-                        subjects.append(sbj)
-                    pair["subjects"] = subjects
-                    day.append(pair)
-                grid.append(day)
-            schedule["grid"] = grid
-
-        # creating permanent (False) schedule
-        else:
-            # TODO: alternative logic
-            pass
+        # TODO: fillig schedule["grid"]
+        # TODO filling timestmps
 
         # returnig raw schedule
         return schedule
@@ -339,8 +253,6 @@ class API:
 if __name__ == "__main__":
     m_api = API()
 
-    # 201-721 | 183-211 | 215-632 | 206-999
     schedule = m_api.get_schedule("201-721")
-    # print(schedule)
     with open("logs.json", "w", encoding="utf-8") as f:
         json.dump(schedule, f, ensure_ascii=False, indent=4)
