@@ -9,8 +9,10 @@
 # ------------------------------------------------------------------------------------------------------------------- #
 
 
-from hashlib import md5
 import json
+from hashlib import md5
+import re
+from datetime import datetime
 
 import requests
 import bs4
@@ -23,9 +25,9 @@ class DatetimeToolbox:
     """
 
     __LOCALE_DATES = {
-        "Янв": "", "Фев": "", "Мар": "", "Апр": "",
-        "Май": "", "Июн": "", "Июл": "", "Авг": "",
-        "Сен": "", "Окт": "", "Ноя": "", "Дек": ""
+        "Янв": "Jan", "Фев": "Feb", "Мар": "Mar", "Апр": "Apr",
+        "Май": "May", "Июн": "Jun", "Июл": "Jul", "Авг": "Aug",
+        "Сен": "Sep", "Окт": "Oct", "Ноя": "Nov", "Дек": "Dec"
     }
 
     def __init__(self) -> None:
@@ -34,6 +36,18 @@ class DatetimeToolbox:
         """
 
         pass
+
+    def dm_normalize(self, dm: str) -> str:
+        """
+        ...
+        """
+
+        d, m = dm.split(" ")
+        if m in self.__LOCALE_DATES.keys():
+            m = self.__LOCALE_DATES[m]
+        m = "{:02d}".format(datetime.strptime(m, "%b").month)
+
+        return f"{d}.{m}"
 
 
 class API:
@@ -227,10 +241,18 @@ class API:
             ...
             """
 
-            if not (ord(s[0].lower()) in range(ord("а"), ord("я") + 1)):
-                s = s[1:]
-            s = s.replace("_", "")
-            return s.strip()
+            # removing emojis
+            regrex_pattern = re.compile(
+                pattern="["
+                u"\U0001F600-\U0001F64F"  # emoticons
+                u"\U0001F300-\U0001F5FF"  # symbols & pictographs
+                u"\U0001F680-\U0001F6FF"  # transport & map symbols
+                u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
+                "]+", flags=re.UNICODE
+            )
+
+            # returning clean string
+            return regrex_pattern.sub(r'', s)
 
         # creating token (str object)
         token = self.__create_token(group)
@@ -290,12 +312,14 @@ class API:
                         raw_texts = div_lesson.find(
                             "div", {"class": "bold small"}
                         ).text.split("(")
+                        raw_dates = [d.strip() for d in div_lesson.find(
+                            "div", {"class": "schedule-dates"}).text.split("-")]
                         sbj = {
                             "title":  raw_texts[0].split("(")[0].strip(),
                             "type": raw_texts[-1][:-1].strip(),
                             "teachers": [t.strip() for t in div_lesson.find("div", {"class": "teacher small"}).text.split(",")],
                             "location": [str_clear(l.text) for l in div_lesson.find_all("div", {"class": "schedule-auditory"})],
-                            "dates": [d.strip() for d in div_lesson.find("div", {"class": "schedule-dates"}).text.split("-")]
+                            "dates": [f"{DatetimeToolbox().dm_normalize(d)}.{datetime.today().year}" for d in raw_dates]
                         }
                         subjects.append(sbj)
                     pair["subjects"] = subjects
@@ -305,6 +329,7 @@ class API:
 
         # creating permanent (False) schedule
         else:
+            # TODO: alternative logic
             pass
 
         # returnig raw schedule
