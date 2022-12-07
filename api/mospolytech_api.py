@@ -186,13 +186,6 @@ class API:
         ...
         """
 
-        def schedule_type():
-            """
-            ...
-            """
-
-            pass
-
         def get_timestamps():
             """
             ...
@@ -237,14 +230,46 @@ class API:
                 )
 
         # creating raw schedule
-        dates = [data["group"]["dateFrom"], data["group"]["dateTo"]]
         schedule = {
             "group": group,
             "grid": None,
-            "dates": [".".join(d.split("-")[::-1]) for d in dates],
+            "dates": [".".join(d.split("-")[::-1]) for d in [data["group"]["dateFrom"], data["group"]["dateTo"]]],
         }
-        # TODO: fillig schedule["grid"]
-        # TODO filling timestmps
+
+        # filling grid
+        grid = []
+        # iterations by day
+        for k_day in data["grid"]:
+            day = []
+            # iterations by pair
+            for k_pair in data["grid"][k_day]:
+                pair = {"time": [None, None], "subjects": []}
+                # iterations by subjects
+                for raw_sbj in data["grid"][k_day][k_pair]:
+                    # checking key day type & creating sbj["dates"]
+                    if len(k_day) == 10:
+                        dates = [k_day] * 2
+                    else:
+                        dates = [".".join(d.split("-")[::-1])
+                                 for d in [raw_sbj["df"], raw_sbj["dt"]]]
+                    # creating sbj
+                    sbj = {
+                        "title": raw_sbj["sbj"],
+                        "type": raw_sbj["type"],
+                        "teachers": [t.strip() for t in raw_sbj["teacher"].split(",")],
+                        "location": raw_sbj["location"],
+                        "rooms": raw_sbj["shortRooms"],
+                        "dates": dates
+                    }
+                    # appending pair
+                    pair["subjects"].append(sbj)
+                # appending day
+                day.append(pair)
+            # appending grid
+            grid.append(day)
+
+        # fiiling raw schedule["grid"]
+        schedule["grid"] = grid
 
         # returnig raw schedule
         return schedule
@@ -253,6 +278,16 @@ class API:
 if __name__ == "__main__":
     m_api = API()
 
-    schedule = m_api.get_schedule("201-721")
+    # schedule = m_api.get_schedule("201-721")
+    # with open("logs_201-721.json", "w", encoding="utf-8") as f:
+    #     json.dump(schedule, f, ensure_ascii=False, indent=4)
+
+    logs = []
+    for g in m_api.get_groups():
+        print(g)
+        try:
+            logs.append(m_api.get_schedule(g))
+        except ValueError as e:
+            print(e.args)
     with open("logs.json", "w", encoding="utf-8") as f:
-        json.dump(schedule, f, ensure_ascii=False, indent=4)
+        json.dump(logs, f, ensure_ascii=False, indent=4)
