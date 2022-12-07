@@ -13,7 +13,6 @@ import json
 from hashlib import md5
 
 import requests
-import bs4
 from bs4 import BeautifulSoup as bs
 
 
@@ -186,23 +185,74 @@ class API:
         ...
         """
 
-        def get_timestamps():
+        def get_type(grid: dict) -> str:
             """
             ...
             """
 
-            pass
+            if len(list(grid.keys())[0]) == 10:
+                return "short"
+            return "long"
 
-        def merge():
+        def get_timestamps(group: str) -> list:
             """
             ...
             """
 
-            pass
+            # TODO: fix (rewrite) the logic of getting timestamps for groups (error on "short" type)
+
+            # creating token (str object)
+            token = self.__create_token(group)
+
+            # making request
+            r_url = self.__CONFIG["urls"]["schedule"] + \
+                f"?group={group.replace(' ', '%20')}&token={token}"
+            r = requests.get(url=r_url, headers=self.headers)
+            content = r.content.decode("utf-8")
+
+            # checking status code
+            self.__check_status_code(r.status_code)
+
+            # getting scedule (div block) & list of days (div blocks)
+            soup = bs(content, features="html.parser")
+            div_schedule = soup.find("div", {"class": "schedule-week"})
+            div_days = div_schedule.find_all("div", {"class": "schedule-day"})
+
+            # creating timestamps
+            timestamps = []
+            for div_day in div_days:
+                div_pairs = div_day.find("div", {"class": "pairs"}).find_all(
+                    "div", {"class": "pair"})
+                for div_pair in div_pairs:
+                    interval = [t.strip() for t in div_pair.find(
+                        "div", {"class": "time"}).text.split("-")]
+                    timestamps.append(interval)
+
+            # returning timestamps
+            return timestamps
+
+        def merge(schedule: dict, timestamps: list) -> dict:
+            """
+            ...
+            """
+
+            print(len(schedule["grid"]))
+            print(len(timestamps))
+            print(timestamps)
+
+            # merging timestamps
+            for day in schedule["grid"]:
+                for pair in day:
+                    if (schedule["type"] == "long") or (schedule["type"] == "short" and pair["subjects"]):
+                        interval = [t.zfill(5) for t in timestamps.pop(0)]
+                        pair["time"] = interval
+
+            # returning raw schedule with timestamps
+            return schedule
 
         # making request
         r_url = self.__CONFIG["urls"]["referer"] + \
-            "site/group?group=" + group.replace(" ", "%20")
+            f"site/group?group={group.replace(' ', '%20')}"
         r = requests.get(url=r_url, headers=self.headers)
 
         # checking status code
@@ -234,6 +284,7 @@ class API:
             "group": group,
             "grid": None,
             "dates": [".".join(d.split("-")[::-1]) for d in [data["group"]["dateFrom"], data["group"]["dateTo"]]],
+            "type": get_type(data["grid"])
         }
 
         # filling grid
@@ -246,10 +297,11 @@ class API:
                 pair = {"time": [None, None], "subjects": []}
                 # iterations by subjects
                 for raw_sbj in data["grid"][k_day][k_pair]:
-                    # checking key day type & creating sbj["dates"]
-                    if len(k_day) == 10:
+                    # checking type & creating sbj["dates"]
+                    dates = [None, None]
+                    if schedule["type"] == "short":
                         dates = [k_day] * 2
-                    else:
+                    elif schedule["type"] == "long":
                         dates = [".".join(d.split("-")[::-1])
                                  for d in [raw_sbj["df"], raw_sbj["dt"]]]
                     # creating sbj
@@ -272,6 +324,8 @@ class API:
         schedule["grid"] = grid
 
         # returnig raw schedule
+        if timestamps:
+            return merge(schedule, get_timestamps(group))
         return schedule
 
 
@@ -282,12 +336,14 @@ if __name__ == "__main__":
     # with open("logs_201-721.json", "w", encoding="utf-8") as f:
     #     json.dump(schedule, f, ensure_ascii=False, indent=4)
 
-    logs = []
-    for g in m_api.get_groups():
-        print(g)
-        try:
-            logs.append(m_api.get_schedule(g))
-        except ValueError as e:
-            print(e.args)
-    with open("logs.json", "w", encoding="utf-8") as f:
-        json.dump(logs, f, ensure_ascii=False, indent=4)
+    # logs = []
+    # for g in m_api.get_groups():
+    #     print(g)
+    #     try:
+    #         logs.append(m_api.get_schedule(g))
+    #     except ValueError as e:
+    #         print(e.args)
+    # with open("logs.json", "w", encoding="utf-8") as f:
+    #     json.dump(logs, f, ensure_ascii=False, indent=4)
+
+schedule = m_api.get_schedule("183-211")
