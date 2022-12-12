@@ -5,7 +5,7 @@
 # ██║╚██╔╝██║██║   ██║╚════██║██╔═══╝ ██║   ██║██║    ╚██╔╝     ██║   ██╔══╝  ██║     ██╔══██║    ██╔══██║██╔═══╝ ██║ #
 # ██║ ╚═╝ ██║╚██████╔╝███████║██║     ╚██████╔╝███████╗██║      ██║   ███████╗╚██████╗██║  ██║    ██║  ██║██║     ██║ #
 # ╚═╝     ╚═╝ ╚═════╝ ╚══════╝╚═╝      ╚═════╝ ╚══════╝╚═╝      ╚═╝   ╚══════╝ ╚═════╝╚═╝  ╚═╝    ╚═╝  ╚═╝╚═╝     ╚═╝ #
-# author: https://t.me/rand0lphc                                                                          version 2.2 #
+# author: https://t.me/rand0lphc                                                                          version 3.0 #
 # ------------------------------------------------------------------------------------------------------------------- #
 
 
@@ -29,16 +29,21 @@ class API:
         default is __DEFAULT_USER_AGENT;
 
     METHODS
-        * def get_groups() -> list[str];
-        * def get_students(list_groups: list = []) -> list[str];
-        * get_schedule(group: str, timestamps: bool = True) -> dict;
+        * get_groups() -> list[str];
+        * get_students(list_groups: list = None) -> list[str];
+        * def get_schedule(group: str) -> dict;
     """
 
-    # private attributes for API operation
+    # private attributes for API operations
     __DEFAULT_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) " \
                            "Chrome/86.0.4240.75 Safari/537.36"
-    with open("api/config.json", "r", encoding="utf-8") as config_file:
-        __CONFIG = json.load(config_file)
+    __URLS = {
+        "referer": "https://rasp.dmami.ru/",
+        "groups": "https://rasp.dmami.ru/groups-list.json",
+        "students": "https://e.mospolytech.ru/old/lk_api_mapp.php",
+        "schedule": "https://rasp.dmami.ru/site/group-html"
+    }
+    __HASH_SALT = "}{YWHksld#52673$3*9dNG"
 
     def __init__(self, user_agent: str = __DEFAULT_USER_AGENT) -> None:
         """
@@ -59,7 +64,7 @@ class API:
 
         # setting headers
         self.headers = {
-            "referer": self.__CONFIG["urls"]["referer"],
+            "referer": self.__URLS["referer"],
             "user-agent": user_agent
         }
 
@@ -101,7 +106,7 @@ class API:
         """
 
         # creating token (hash object)
-        string = group + self.__CONFIG["hash_salt"]
+        string = group + self.__HASH_SALT
         token = md5(md5(string.encode()).hexdigest().encode())
 
         # returning created token (str object)
@@ -123,7 +128,7 @@ class API:
         """
 
         # making request
-        r_url = self.__CONFIG["urls"]["groups"]
+        r_url = self.__URLS["groups"]
         r = requests.get(url=r_url, headers=self.headers)
 
         # checking status code
@@ -135,15 +140,14 @@ class API:
         # returning sorted list of group names
         return sorted([name for name in data["groups"]])
 
-    # TODO: change list_groups: list = [] to list_groups: list = None
-    def get_students(self, list_groups: list = []) -> list[str]:
+    def get_students(self, list_groups: list = None) -> list[str]:
         """
         DESCRIPTION
             * returns a list of students for the given groups;
 
         ARGS
             * (optional) list_groups (list[str]): list of group names,
-            default is [] - search across all groups;
+            default is None - search across all groups;
 
         RETURNS
             * students (list[str]): sorted list of students for the given groups;
@@ -153,7 +157,7 @@ class API:
         """
 
         # forming group names list
-        if not list_groups:
+        if list_groups is None:
             list_groups = self.get_groups()
 
         # creating list of students
@@ -166,7 +170,7 @@ class API:
             token = self.__create_token(group)
 
             # making request
-            r_url = self.__CONFIG["urls"]["students"] + \
+            r_url = self.__URLS["students"] + \
                 f"?group={group.replace(' ', '%20')}&token={token}"
             r = requests.get(url=r_url, headers=self.headers)
             content = r.content.decode("utf-8")
@@ -177,15 +181,26 @@ class API:
             # loading content to list of students
             list_students += json.loads(content)
 
+        # returning sorted list of students
         return sorted(list_students)
 
     def get_schedule(self, group: str) -> dict:
         """
-        ...
+        DESCRIPTION
+            * returns a dict of the raw schedule;
+
+        ARGS
+            * (required) group (str): name of the group;
+
+        RETURNS
+            * schedule (dict): dict containing raw schedule information;
+
+        ERRORS
+            * ConnectionError(): if there is a problem with the connection;
         """
 
         # making request
-        r_url = self.__CONFIG["urls"]["referer"] + \
+        r_url = self.__URLS["referer"] + \
             f"site/group?group={group.replace(' ', '%20')}"
         r = requests.get(url=r_url, headers=self.headers)
 
@@ -216,9 +231,9 @@ class API:
         # creating raw schedule
         schedule = {
             "group": group,
-            "evening": data["group"]["evening"],
+            "type": "evening" if data["group"]["evening"] else "morning",
             "dates": [".".join(d.split("-")[::-1]) for d in [data["group"]["dateFrom"], data["group"]["dateTo"]]],
-            "grid": None
+            "grid": []
         }
 
         # filling grid
@@ -262,18 +277,4 @@ class API:
 
 
 if __name__ == "__main__":
-    m_api = API()
-
-    schedule = m_api.get_schedule("201-721")
-    with open("logs.json", "w", encoding="utf-8") as f:
-        json.dump(schedule, f, ensure_ascii=False, indent=4)
-
-    # logs = []
-    # for g in m_api.get_groups():
-    #     print(g)
-    #     try:
-    #         logs.append(m_api.get_schedule(g))
-    #     except ValueError as e:
-    #         print(e.args)
-    # with open("logs.json", "w", encoding="utf-8") as f:
-    #     json.dump(logs, f, ensure_ascii=False, indent=4)
+    pass
