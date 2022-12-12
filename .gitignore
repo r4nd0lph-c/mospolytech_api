@@ -1,2 +1,5 @@
 # ignore venv
 venv/
+
+# ignore cache
+api/__pycache__
