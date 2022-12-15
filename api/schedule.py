@@ -86,8 +86,17 @@ class Schedule:
             "body": []
         }
 
+        # getting raw body
+        if len(self.__grid) == 6:
+            # first case (per-week schedule)
+            w = self.__d(date).weekday()
+            raw_body = self.__grid[w]
+        else:
+            # second case (per-day schedule)
+            d = abs((self.__d(date) - self.__d(self.dates[0])).days)
+            raw_body = self.__grid[d]
+
         # filling body
-        raw_body = self.__grid[5]  # !!! <--- fix logic
         for index, pair in enumerate(raw_body):
             sbj = {
                 "time": self.TIME_SECTIONS[self.type][index],
@@ -95,6 +104,7 @@ class Schedule:
             }
             for raw_sbj in pair["subjects"]:
                 if self.__d(raw_sbj["dates"][0]) <= self.__d(date) <= self.__d(raw_sbj["dates"][1]):
+                    del raw_sbj["dates"]
                     sbj["subject"] = raw_sbj
                     break
             day["body"].append(sbj)

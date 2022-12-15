@@ -25,7 +25,7 @@ if __name__ == "__main__":
     print(f"\n\nSCHEDULE:\n{dict_schedule}")
 
     # saving the raw schedule to JSON file
-    with open("logs.json", "w", encoding="utf-8") as f:
+    with open("logs_raw_schedule.json", "w", encoding="utf-8") as f:
         json.dump(dict_schedule, f, ensure_ascii=False, indent=4)
 
     # Group() object initialization
