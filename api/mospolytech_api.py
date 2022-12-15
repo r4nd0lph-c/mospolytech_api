@@ -54,7 +54,6 @@ class API:
             * (optional) user_agent (str): string that lets servers identify the application,
             default is __DEFAULT_USER_AGENT;
 
-
         RETURNS
             * there are no return;
 
@@ -237,17 +236,12 @@ class API:
         }
 
         # filling grid
-        grid = []
-        # iterations by day
         for k_day in data["grid"]:
             day = []
-            # iterations by pair
             for k_pair in data["grid"][k_day]:
                 pair = {"subjects": []}
-                # iterations by subjects
                 for raw_sbj in data["grid"][k_day][k_pair]:
                     # checking type & creating sbj["dates"]
-                    dates = [None, None]
                     if len(list(data["grid"].keys())[0]) == 10:
                         dates = [k_day] * 2
                     else:
@@ -255,22 +249,16 @@ class API:
                                  for d in [raw_sbj["df"], raw_sbj["dt"]]]
                     # creating sbj
                     sbj = {
-                        "title": raw_sbj["sbj"],
+                        "title": raw_sbj["sbj"].strip(),
                         "type": raw_sbj["type"],
                         "teachers": [t.strip() for t in raw_sbj["teacher"].split(",")],
-                        "location": raw_sbj["location"],
-                        "rooms": raw_sbj["shortRooms"],
+                        "location": raw_sbj["location"].strip(),
+                        "rooms": [r.strip() for r in raw_sbj["shortRooms"]],
                         "dates": dates
                     }
-                    # appending pair
                     pair["subjects"].append(sbj)
-                # appending day
                 day.append(pair)
-            # appending grid
-            grid.append(day)
-
-        # fiiling raw schedule["grid"]
-        schedule["grid"] = grid
+            schedule["grid"].append(day)
 
         # returnig raw schedule
         return schedule
