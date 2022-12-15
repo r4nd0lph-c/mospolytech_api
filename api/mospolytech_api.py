@@ -243,7 +243,8 @@ class API:
                 for raw_sbj in data["grid"][k_day][k_pair]:
                     # checking type & creating sbj["dates"]
                     if len(list(data["grid"].keys())[0]) == 10:
-                        dates = [k_day] * 2
+                        dates = [".".join(d.split("-")[::-1])
+                                 for d in [k_day] * 2]
                     else:
                         dates = [".".join(d.split("-")[::-1])
                                  for d in [raw_sbj["df"], raw_sbj["dt"]]]
