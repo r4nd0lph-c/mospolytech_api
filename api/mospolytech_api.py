@@ -192,7 +192,7 @@ class API:
             * (required) group (str): name of the group;
 
         RETURNS
-            * schedule (dict): dict containing raw schedule information;
+            * raw_schedule (dict): dict containing raw schedule information;
 
         ERRORS
             * ConnectionError(): if there is a problem with the connection;
@@ -228,7 +228,7 @@ class API:
                 )
 
         # creating raw schedule
-        schedule = {
+        raw_schedule = {
             "group": group,
             "type": "evening" if data["group"]["evening"] else "morning",
             "dates": [".".join(d.split("-")[::-1]) for d in [data["group"]["dateFrom"], data["group"]["dateTo"]]],
@@ -259,10 +259,10 @@ class API:
                     }
                     pair["subjects"].append(sbj)
                 day.append(pair)
-            schedule["grid"].append(day)
+            raw_schedule["grid"].append(day)
 
         # returnig raw schedule
-        return schedule
+        return raw_schedule
 
 
 if __name__ == "__main__":

@@ -14,7 +14,21 @@ from datetime import datetime
 
 class Schedule:
     """
-    ...
+    DESCRIPTION
+        * a class representing a schedule of a group;
+        * contains information about the schedule;
+
+    ATTRIBUTES
+        * TIME_SECTIONS (dict): time sections for different forms of education;
+        * group (str): name of the group;
+        * type (str): type of the group;
+        * dates (list[str]): range of available dates;
+
+    ARGS
+        * (required) raw_schedule (dict): dict containing raw schedule information;
+
+    METHODS
+        * get_day(date: str) -> dict;
     """
 
     TIME_SECTIONS = {
@@ -40,7 +54,17 @@ class Schedule:
 
     def __init__(self, raw_schedule: dict) -> None:
         """
-        ...
+        DESCRIPTION
+            * initializes the Schedule object;
+
+        ARGS
+            * (required) raw_schedule (dict): dict containing raw schedule information;
+
+        RETURNS
+            * there are no return;
+
+        ERRORS
+            * there are no custom errors;
         """
 
         self.group = raw_schedule["group"]
@@ -71,7 +95,17 @@ class Schedule:
 
     def get_day(self, date: str) -> dict:
         """
-        ...
+        DESCRIPTION
+            * returns a dict with information about the study day;
+
+        ARGS
+            * (required) date (str): date of the day (format: "%d.%m.%Y");
+
+        RETURNS
+            * day (dict): a dict containing the date and pairs of the study day;
+
+        ERRORS
+            * ValueError(): if there is a problem with the range of available dates;
         """
 
         # checking correctness of date
