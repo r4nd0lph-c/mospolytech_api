@@ -35,7 +35,7 @@ class Schedule:
         ]
     }
 
-    def __init__(self) -> None:
+    def __init__(self, raw_schedule: dict) -> None:
         """
         ...
         """
