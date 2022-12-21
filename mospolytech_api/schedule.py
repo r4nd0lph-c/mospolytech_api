@@ -111,7 +111,7 @@ class Schedule:
         # checking correctness of date
         if not (self.__d(self.dates[0]) <= self.__d(date) <= self.__d(self.dates[1])):
             raise ValueError(
-                f"The specified date {date} is outside the range of available dates: [{self.dates[0]} - {self.dates[1]}]"
+                f"The specified date {date} is outside the range of available dates: [{self.dates[0]} - {self.dates[1]}]."
             )
 
         # creating day
