@@ -2,12 +2,12 @@
 
 
 import json
-from api import mospolytech_api, group, schedule
+from mospolytech_api import api, group, schedule
 
 
 if __name__ == "__main__":
     # API() initialization
-    api = mospolytech_api.API()
+    api = api.API()
 
     # getting all available groups
     list_groups = api.get_groups()
@@ -29,7 +29,7 @@ if __name__ == "__main__":
         json.dump(dict_schedule, f, ensure_ascii=False, indent=4)
 
     # Group() object initialization
-    group_obj = group.Group()
+    # group_obj = group.Group()
 
     # ...
     # ...

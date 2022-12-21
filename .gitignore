@@ -2,4 +2,4 @@
 venv/
 
 # ignore cache
-api/__pycache__
+mospolytech_api/__pycache__
