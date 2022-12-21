@@ -34,7 +34,7 @@ class API:
         * def get_schedule(group: str) -> dict;
     """
 
-    # private attributes for API operations
+    # private class attributes for API operations
     __DEFAULT_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) " \
                            "Chrome/86.0.4240.75 Safari/537.36"
     __URLS = {
