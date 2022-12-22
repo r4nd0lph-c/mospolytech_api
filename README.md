@@ -63,7 +63,8 @@ list_students = api.get_students([
                         "title": "Information systems tools",
                         "type": "Lecture",
                         "teachers": [
-                            "Randolph Carter
+                            "Randolph Carter",
+                            "Dorian Gray"
                         ],
                         "location": "Webinar",
                         "rooms": [],
