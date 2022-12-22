@@ -46,9 +46,8 @@ list_students = api.get_students([
         json.dump(dict_schedule, f, ensure_ascii=False, indent=4)
 ```
 
-The contents of "logs_raw_schedule file.json"
-
 ```javascript
+// logs_raw_schedule file.json
 {
     "group": "201-721",
     "type": "morning",
