@@ -60,10 +60,10 @@ list_students = api.get_students([
             {
                 "subjects": [
                     {
-                        "title": "Инструментальные средства информационных систем",
-                        "type": "Лекция",
+                        "title": "Information systems tools",
+                        "type": "Lecture",
                         "teachers": [
-                            "Якубовский Кирилл Игоревич"
+                            "Randolph Carter
                         ],
                         "location": "Webinar",
                         "rooms": [],
@@ -73,10 +73,10 @@ list_students = api.get_students([
                         ]
                     },
                     {
-                        "title": "Программирование для мобильных устройств",
-                        "type": "Лекция",
+                        "title": "Programming for mobile devices",
+                        "type": "Lecture",
                         "teachers": [
-                            "Лазарева Ольга Юрьевна"
+                            "Orlando Jacobson"
                         ],
                         "location": "Webinar",
                         "rooms": [],
