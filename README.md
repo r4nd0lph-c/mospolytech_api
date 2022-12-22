@@ -42,12 +42,12 @@ list_students = api.get_students([
     dict_schedule = api.get_schedule("201-721")
     
     # saving raw schedule to JSON file
-    with open("logs_raw_schedule.json", "w", encoding="utf-8") as f:
+    with open("raw_schedule.json", "w", encoding="utf-8") as f:
         json.dump(dict_schedule, f, ensure_ascii=False, indent=4)
 ```
 
 ```javascript
-// logs_raw_schedule file.json
+// raw_schedule.json
 {
     "group": "201-721",
     "type": "morning",
