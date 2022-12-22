@@ -75,12 +75,15 @@ list_students = api.get_students([
                     },
                     {
                         "title": "Programming for mobile devices",
-                        "type": "Lecture",
+                        "type": "Practice",
                         "teachers": [
                             "Orlando Jacobson"
                         ],
-                        "location": "Webinar",
-                        "rooms": [],
+                        "location": "Pryanishnikova",
+                        "rooms": [
+                            "Pr1429",
+                            "Pr1430"
+                        ],
                         "dates": [
                             "31.10.2022",
                             "25.12.2022"
