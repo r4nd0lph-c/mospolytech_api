@@ -27,14 +27,14 @@ groups = api.get_groups()
 ``` python
 # students of all  groups
 students = api.get_students()
-# students = ["Abbie Choi", "Alan Trevino", ... "Zion Andrews"]
+# students = ["Amy Curtis Laurence", "Elizabeth March", ... "Josephine Bhaer"]
 
 # students of specified  groups
 students = api.get_students([
         "201-721", "201-722", "201-723",
         "201-724", "201-725", "201-726"
 ])
-# students = ["Abbie Choi", "Alan Trevino", ... "Zion Andrews"]
+# students = ["Amy Curtis Laurence", "Elizabeth March", ... "Josephine Bhaer"]
 ```
 
 ### Getting raw shedule of specified group
@@ -57,17 +57,17 @@ students = api.get_students([
             {
                 "subjects": [
                     {
-                        "title": "Information systems tools",
+                        "title": "Philosophy of life",
                         "type": "Lecture",
-                        "teachers": ["Randolph Carter", "Dorian Gray"],
+                        "teachers": ["Lord Henry Wotton", "Dorian Gray"],
                         "location": "Webinar",
                         "rooms": [],
                         "dates": ["01.09.2022", "30.10.2022"]
                     },
                     {
-                        "title": "Programming for mobile devices",
+                        "title": "Art and modern design",
                         "type": "Practice",
-                        "teachers": ["Orlando Jacobson"],
+                        "teachers": ["Basil Hallward"],
                         "location": "Pryanishnikova",
                         "rooms": ["Pr1429", "Pr1430"],
                         "dates": ["31.10.2022", "25.12.2022"]
@@ -116,9 +116,9 @@ with open("day.json", "w", encoding="utf-8") as f:
         {
             "time": ["09:00", "10:30"],
             "subject": {
-                "title": "Programming for mobile devices",
+                "title": "Art and modern design",
                 "type": "Practice",
-                "teachers": ["Orlando Jacobson"],
+                "teachers": ["Basil Hallward"],
                 "location": "Pryanishnikova",
                 "rooms": ["Pr1429", "Pr1430"]
             }
