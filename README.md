@@ -21,3 +21,18 @@ api = api.API()
 list_groups = api.get_groups()
 # list_groups = ['181-111', '181-112', '181-113', ..., '22А-531', '22А-811', '22А-812']
 ```
+
+
+###  Getting list of students
+``` python
+# students of all  groups
+list_students = api.get_students()
+# list_students = ['Abbie Choi', 'Alan Trevino', ... 'Zion Andrews']
+
+# students of specified  groups
+list_students = api.get_students([
+        "201-721", "201-722", "201-723",
+        "201-724", "201-725", "201-726"
+    ])
+# list_students = ['Abbie Choi', 'Alan Trevino', ... 'Zion Andrews']
+```
