@@ -51,10 +51,7 @@ students = api.get_students([
 {
     "group": "201-721",
     "type": "morning",
-    "dates": [
-        "01.09.2022",
-        "25.12.2022"
-    ],
+    "dates": ["01.09.2022", "25.12.2022"],
     "grid": [
         [
             {
