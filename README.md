@@ -18,32 +18,32 @@ api = api.API()
 
 ###  Getting available groups
 ``` python
-list_groups = api.get_groups()
-# list_groups = ["181-111", "181-112", "181-113", ..., "22А-531", "22А-811", "22А-812"]
+groups = api.get_groups()
+# groups = ["181-111", "181-112", "181-113", ..., "22А-531", "22А-811", "22А-812"]
 ```
 
 
 ###  Getting list of students
 ``` python
 # students of all  groups
-list_students = api.get_students()
-# list_students = ["Abbie Choi", "Alan Trevino", ... "Zion Andrews"]
+students = api.get_students()
+# students = ["Abbie Choi", "Alan Trevino", ... "Zion Andrews"]
 
 # students of specified  groups
-list_students = api.get_students([
+students = api.get_students([
         "201-721", "201-722", "201-723",
         "201-724", "201-725", "201-726"
     ])
-# list_students = ["Abbie Choi", "Alan Trevino", ... "Zion Andrews"]
+# students = ["Abbie Choi", "Alan Trevino", ... "Zion Andrews"]
 ```
 
 ### Getting raw shedule of specified group
 ```python
-    dict_schedule = api.get_schedule("201-721")
+    raw_schedule = api.get_schedule("201-721")
     
-    # saving raw schedule to JSON file
+    # saving raw_schedule to JSON file
     with open("raw_schedule.json", "w", encoding="utf-8") as f:
-        json.dump(dict_schedule, f, ensure_ascii=False, indent=4)
+        json.dump(raw__schedule, f, ensure_ascii=False, indent=4)
 ```
 
 ```javascript
@@ -105,6 +105,91 @@ list_students = api.get_students([
         [...],
         [...],
         [...]
+    ]
+}
+```
+
+### Schedule object initialization
+```python
+from mospolytech_api import schedule
+
+schedule_obj = schedule.Schedule(raw_schedule)
+```
+
+### Getting schedule on specified day
+```python
+day = schedule_obj.get_day("12.12.2022")
+
+# saving day to JSON file
+with open("day.json", "w", encoding="utf-8") as f:
+        json.dump(day, f, ensure_ascii=False, indent=4)
+```
+
+```javascript
+// day.json
+{
+    "date": "12.12.2022",
+    "body": [
+        {
+            "time": [
+                "09:00",
+                "10:30"
+            ],
+            "subject": {
+                "title": "Programming for mobile devices",
+                "type": "Practice",
+                "teachers": [
+                    "Orlando Jacobson"
+                ],
+                "location": "Pryanishnikova",
+                "rooms": [
+                    "Pr1429",
+                    "Pr1430"
+                ]
+            }
+        },
+        {
+            "time": [
+                "10:40",
+                "12:10"
+            ],
+            "subject": null
+        },
+        {
+            "time": [
+                "12:20",
+                "13:50"
+            ],
+            "subject": null
+        },
+        {
+            "time": [
+                "14:30",
+                "16:00"
+            ],
+            "subject": null
+        },
+        {
+            "time": [
+                "16:10",
+                "17:40"
+            ],
+            "subject": null
+        },
+        {
+            "time": [
+                "17:50",
+                "19:20"
+            ],
+            "subject": null
+        },
+        {
+            "time": [
+                "19:30",
+                "21:00"
+            ],
+            "subject": null
+        }
     ]
 }
 ```
