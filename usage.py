@@ -44,6 +44,6 @@ if __name__ == "__main__":
     day = schedule_obj.get_day("12.12.2022")
     print(f"\n\nGROUP {schedule_obj.group}, DAY {day['date']}:\n{day['body']}")
 
-    # saving dau to JSON file
+    # saving day to JSON file
     with open("day.json", "w", encoding="utf-8") as f:
         json.dump(day, f, ensure_ascii=False, indent=4)
