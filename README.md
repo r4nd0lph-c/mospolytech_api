@@ -33,7 +33,7 @@ students = api.get_students()
 students = api.get_students([
         "201-721", "201-722", "201-723",
         "201-724", "201-725", "201-726"
-    ])
+])
 # students = ["Abbie Choi", "Alan Trevino", ... "Zion Andrews"]
 ```
 
