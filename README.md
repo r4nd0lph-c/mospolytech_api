@@ -43,9 +43,10 @@ students = api.get_students([
     
     # saving raw_schedule to JSON file
     with open("raw_schedule.json", "w", encoding="utf-8") as f:
-        json.dump(raw__schedule, f, ensure_ascii=False, indent=4)
+        json.dump(raw_schedule, f, ensure_ascii=False, indent=4)
 ```
 
+<details><summary>Check raw_schedule.json</summary>
 ```javascript
 // raw_schedule.json
 {
@@ -91,6 +92,7 @@ students = api.get_students([
     ]
 }
 ```
+</details>
 
 ### Schedule object initialization
 ```python
@@ -108,6 +110,7 @@ with open("day.json", "w", encoding="utf-8") as f:
         json.dump(day, f, ensure_ascii=False, indent=4)
 ```
 
+<details><summary>Check day.json</summary>
 ```javascript
 // day.json
 {
@@ -150,6 +153,7 @@ with open("day.json", "w", encoding="utf-8") as f:
     ]
 }
 ```
+</details>
 
 ### More examples
 Examples of using all available functionality are in the file [usage.py](usage.py).
