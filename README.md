@@ -150,3 +150,6 @@ with open("day.json", "w", encoding="utf-8") as f:
     ]
 }
 ```
+
+### More examples
+Examples of using all available functionality are in the file [usage.py](usage.py).
