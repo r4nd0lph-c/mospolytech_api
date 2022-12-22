@@ -19,7 +19,7 @@ api = api.API()
 ###  Getting available groups
 ``` python
 list_groups = api.get_groups()
-# list_groups = ['181-111', '181-112', '181-113', ..., '22А-531', '22А-811', '22А-812']
+# list_groups = ["181-111", "181-112", "181-113", ..., "22А-531", "22А-811", "22А-812"]
 ```
 
 
@@ -27,12 +27,81 @@ list_groups = api.get_groups()
 ``` python
 # students of all  groups
 list_students = api.get_students()
-# list_students = ['Abbie Choi', 'Alan Trevino', ... 'Zion Andrews']
+# list_students = ["Abbie Choi", "Alan Trevino", ... "Zion Andrews"]
 
 # students of specified  groups
 list_students = api.get_students([
         "201-721", "201-722", "201-723",
         "201-724", "201-725", "201-726"
     ])
-# list_students = ['Abbie Choi', 'Alan Trevino', ... 'Zion Andrews']
+# list_students = ["Abbie Choi", "Alan Trevino", ... "Zion Andrews"]
+```
+
+### Getting raw shedule of specified group
+```python
+    dict_schedule = api.get_schedule("201-721")
+    
+    # saving raw schedule to JSON file
+    with open("logs_raw_schedule.json", "w", encoding="utf-8") as f:
+        json.dump(dict_schedule, f, ensure_ascii=False, indent=4)
+```
+
+The contents of "logs_raw_schedule file.json"
+
+```json
+{
+    "group": "201-721",
+    "type": "morning",
+    "dates": [
+        "01.09.2022",
+        "25.12.2022"
+    ],
+    "grid": [
+        [
+            {
+                "subjects": [
+                    {
+                        "title": "Инструментальные средства информационных систем",
+                        "type": "Лекция",
+                        "teachers": [
+                            "Якубовский Кирилл Игоревич"
+                        ],
+                        "location": "Webinar",
+                        "rooms": [],
+                        "dates": [
+                            "01.09.2022",
+                            "30.10.2022"
+                        ]
+                    },
+                    {
+                        "title": "Программирование для мобильных устройств",
+                        "type": "Лекция",
+                        "teachers": [
+                            "Лазарева Ольга Юрьевна"
+                        ],
+                        "location": "Webinar",
+                        "rooms": [],
+                        "dates": [
+                            "31.10.2022",
+                            "25.12.2022"
+                        ]
+                    }
+                ]
+            },
+            {
+                "subjects": []
+            },
+            {...},
+            {...},
+            {...},
+            {...},
+            {...}
+        ],
+        [...],
+        [...],
+        [...],
+        [...],
+        [...]
+    ]
+}
 ```
