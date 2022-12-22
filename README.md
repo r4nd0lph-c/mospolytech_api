@@ -47,51 +47,52 @@ students = api.get_students([
 ```
 
 <details><summary>Check raw_schedule.json</summary>
-```javascript
-// raw_schedule.json
-{
-    "group": "201-721",
-    "type": "morning",
-    "dates": ["01.09.2022", "25.12.2022"],
-    "grid": [
-        [
-            {
-                "subjects": [
+
+        ```javascript
+        // raw_schedule.json
+        {
+            "group": "201-721",
+            "type": "morning",
+            "dates": ["01.09.2022", "25.12.2022"],
+            "grid": [
+                [
                     {
-                        "title": "Philosophy of life",
-                        "type": "Lecture",
-                        "teachers": ["Lord Henry Wotton", "Dorian Gray"],
-                        "location": "Webinar",
-                        "rooms": [],
-                        "dates": ["01.09.2022", "30.10.2022"]
+                        "subjects": [
+                            {
+                                "title": "Philosophy of life",
+                                "type": "Lecture",
+                                "teachers": ["Lord Henry Wotton", "Dorian Gray"],
+                                "location": "Webinar",
+                                "rooms": [],
+                                "dates": ["01.09.2022", "30.10.2022"]
+                            },
+                            {
+                                "title": "Art and modern design",
+                                "type": "Practice",
+                                "teachers": ["Basil Hallward"],
+                                "location": "Pryanishnikova",
+                                "rooms": ["Pr1429", "Pr1430"],
+                                "dates": ["31.10.2022", "25.12.2022"]
+                            }
+                        ]
                     },
                     {
-                        "title": "Art and modern design",
-                        "type": "Practice",
-                        "teachers": ["Basil Hallward"],
-                        "location": "Pryanishnikova",
-                        "rooms": ["Pr1429", "Pr1430"],
-                        "dates": ["31.10.2022", "25.12.2022"]
-                    }
-                ]
-            },
-            {
-                "subjects": []
-            },
-            {...},
-            {...},
-            {...},
-            {...},
-            {...}
-        ],
-        [...],
-        [...],
-        [...],
-        [...],
-        [...]
-    ]
-}
-```
+                        "subjects": []
+                    },
+                    {...},
+                    {...},
+                    {...},
+                    {...},
+                    {...}
+                ],
+                [...],
+                [...],
+                [...],
+                [...],
+                [...]
+            ]
+        }
+        ```
 </details>
 
 ### Schedule object initialization
@@ -111,48 +112,49 @@ with open("day.json", "w", encoding="utf-8") as f:
 ```
 
 <details><summary>Check day.json</summary>
-```javascript
-// day.json
-{
-    "date": "12.12.2022",
-    "body": [
+
+        ```javascript
+        // day.json
         {
-            "time": ["09:00", "10:30"],
-            "subject": {
-                "title": "Art and modern design",
-                "type": "Practice",
-                "teachers": ["Basil Hallward"],
-                "location": "Pryanishnikova",
-                "rooms": ["Pr1429", "Pr1430"]
-            }
-        },
-        {
-            "time": ["10:40", "12:10"],
-            "subject": null
-        },
-        {
-            "time": ["12:20", "13:50"],
-            "subject": null
-        },
-        {
-            "time": ["14:30", "16:00"],
-            "subject": null
-        },
-        {
-            "time": ["16:10", "17:40"],
-            "subject": null
-        },
-        {
-            "time": ["17:50", "19:20"],
-            "subject": null
-        },
-        {
-            "time": ["19:30", "21:00"],
-            "subject": null
+            "date": "12.12.2022",
+            "body": [
+                {
+                    "time": ["09:00", "10:30"],
+                    "subject": {
+                        "title": "Art and modern design",
+                        "type": "Practice",
+                        "teachers": ["Basil Hallward"],
+                        "location": "Pryanishnikova",
+                        "rooms": ["Pr1429", "Pr1430"]
+                    }
+                },
+                {
+                    "time": ["10:40", "12:10"],
+                    "subject": null
+                },
+                {
+                    "time": ["12:20", "13:50"],
+                    "subject": null
+                },
+                {
+                    "time": ["14:30", "16:00"],
+                    "subject": null
+                },
+                {
+                    "time": ["16:10", "17:40"],
+                    "subject": null
+                },
+                {
+                    "time": ["17:50", "19:20"],
+                    "subject": null
+                },
+                {
+                    "time": ["19:30", "21:00"],
+                    "subject": null
+                }
+            ]
         }
-    ]
-}
-```
+        ```
 </details>
 
 ### More examples
