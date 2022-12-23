@@ -108,7 +108,7 @@ day = schedule_obj.get_day("12.12.2022")
 
 # saving day to JSON file
 with open("day.json", "w", encoding="utf-8") as f:
-        json.dump(day, f, ensure_ascii=False, indent=4)
+    json.dump(day, f, ensure_ascii=False, indent=4)
 ```
 
 <details><summary>Check day.json</summary>
