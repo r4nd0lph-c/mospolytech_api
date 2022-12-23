@@ -39,11 +39,11 @@ students = api.get_students([
 
 ### Getting raw shedule of specified group
 ```python
-    raw_schedule = api.get_schedule("201-721")
-    
-    # saving raw_schedule to JSON file
-    with open("raw_schedule.json", "w", encoding="utf-8") as f:
-        json.dump(raw_schedule, f, ensure_ascii=False, indent=4)
+raw_schedule = api.get_schedule("201-721")
+
+# saving raw_schedule to JSON file
+with open("raw_schedule.json", "w", encoding="utf-8") as f:
+    json.dump(raw_schedule, f, ensure_ascii=False, indent=4)
 ```
 
 <details><summary>Check raw_schedule.json</summary>
