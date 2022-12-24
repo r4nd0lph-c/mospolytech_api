@@ -11,9 +11,9 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 ## Usage
 ### API Initialization
 ```python
-from mospolytech_api import api
+from mospolytech_api.api import API
 
-api = api.API()
+api = API()
 ```
 
 ###  Getting available groups
@@ -31,8 +31,8 @@ students = api.get_students()
 
 # students of specified  groups
 students = api.get_students([
-        "201-721", "201-722", "201-723",
-        "201-724", "201-725", "201-726"
+    "201-721", "201-722", "201-723",
+    "201-724", "201-725", "201-726"
 ])
 # students = ["Amy Curtis Laurence", "Elizabeth March", ... "Josephine Bhaer"]
 ```
@@ -97,9 +97,9 @@ with open("raw_schedule.json", "w", encoding="utf-8") as f:
 
 ### Schedule object initialization
 ```python
-from mospolytech_api import schedule
+from mospolytech_api.schedule import Schedule
 
-schedule_obj = schedule.Schedule(raw_schedule)
+schedule_obj = Schedule(raw_schedule)
 ```
 
 ### Getting schedule on specified day
