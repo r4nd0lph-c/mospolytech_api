@@ -27,14 +27,14 @@ groups = api.get_groups()
 ``` python
 # students of all  groups
 students = api.get_students()
-# students = ["Amy Curtis Laurence", "Elizabeth March", ... "Josephine Bhaer"]
+# students = ["Amy Curtis Laurence", "Elizabeth March", ..., "Josephine Bhaer"]
 
 # students of specified  groups
 students = api.get_students([
     "201-721", "201-722", "201-723",
     "201-724", "201-725", "201-726"
 ])
-# students = ["Amy Curtis Laurence", "Elizabeth March", ... "Josephine Bhaer"]
+# students = ["Amy Curtis Laurence", "Elizabeth March", ..., "Josephine Bhaer"]
 ```
 
 ### Getting raw shedule of specified group
