@@ -1,7 +1,4 @@
-<div>
-    <img src="https://img.shields.io/badge/Mospolytech-Project-4A6EB8?style=for-the-badge" alt="Mospolytech Project" height="20">
-    <h1>Mospolytech API</h1>
-</div>
+# Mospolytech API
 
 __Mospolytech API__ is an interface that provides Python developers with convenient tools for interacting with the internal services of the [Moscow Polytechnic University](https://mospolytech.ru/en/).
 
