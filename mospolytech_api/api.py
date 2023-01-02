@@ -19,7 +19,7 @@ class API:
     """
     DESCRIPTION
         * API for working with the services of the Moscow Polytechnic University;
-        * https://mospolytech.ru/;
+        * https://mospolytech.ru/en/;
 
     ATTRIBUTES
         * there are no public attributes;

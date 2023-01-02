@@ -1,15 +1,37 @@
 # Mospolytech API
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus porta lacus accumsan, cursus orci a, lobortis dui. Sed ornare vehicula eros vel vulputate. Curabitur ante odio, fermentum sit amet feugiat eget, faucibus in lacus. Vivamus vitae tincidunt arcu, vitae malesuada risus. Quisque sit amet lacinia libero. Ut vitae mauris eu nulla commodo convallis. Vivamus elementum hendrerit lorem eget laoreet. Ut eget dui eget ante ultrices scelerisque. Nullam malesuada a dui eget porta. Aliquam malesuada metus vitae porta tempus. Suspendisse vehicula ligula risus, non posuere nibh mollis nec. Fusce luctus ultrices lacus, eget convallis purus euismod et. In consequat eget justo ut gravida. In augue est, pharetra non tempor vitae, sollicitudin ut nulla. Integer non facilisis dui. Cras vehicula condimentum ex, sit amet molestie risus aliquam in.
+__Mospolytech API__ is an interface that provides Python developers with convenient tools for interacting with the internal services of the [Moscow Polytechnic University](https://mospolytech.ru/en/).
+
+To use the API, download the repository and place it in your project.
 
 ## Requirements
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+
+Third-party dependencies are required for the API to work. How to install it is shown below.
+
+```
+pip install -r /path/to/requirements.txt
+```
+
+List of dependencies:
+1. requests==2.28.1
 
 ## Features
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+
+The project is in development. But certain functions can already be used (they are checked in the list).
+
+- [x] Getting a list of studying groups
+- [ ] Getting information about the group based on the code name
+- [x] Getting a list of students for the given groups
+- [ ] Getting information about a particular student's visit to a university
+- [x] Getting the group schedule in raw form
+- [x] Getting the current group schedule based on raw data
 
 ## Usage
+
+Code examples for using certain API functions are shown below.
+
 ### API Initialization
+
 ```python
 from mospolytech_api.api import API
 
@@ -17,13 +39,14 @@ api = API()
 ```
 
 ###  Getting available groups
+
 ``` python
 groups = api.get_groups()
 # groups = ["181-111", "181-112", "181-113", ..., "22А-531", "22А-811", "22А-812"]
 ```
 
-
 ###  Getting list of students
+
 ``` python
 # students of all  groups
 students = api.get_students()
@@ -38,6 +61,7 @@ students = api.get_students([
 ```
 
 ### Getting raw shedule of specified group
+
 ```python
 raw_schedule = api.get_schedule("201-721")
 
@@ -96,6 +120,7 @@ with open("raw_schedule.json", "w", encoding="utf-8") as f:
 </details>
 
 ### Schedule object initialization
+
 ```python
 from mospolytech_api.schedule import Schedule
 
@@ -103,6 +128,7 @@ schedule_obj = Schedule(raw_schedule)
 ```
 
 ### Getting schedule on specified day
+
 ```python
 day = schedule_obj.get_day("12.12.2022")
 
@@ -158,4 +184,5 @@ with open("day.json", "w", encoding="utf-8") as f:
 </details>
 
 ### More examples
+
 Examples of using all available functionality are in the file [usage.py](usage.py).
