@@ -1,4 +1,8 @@
-# Mospolytech API
+<div align="center">
+    <img src="https://img.shields.io/badge/Mospolytech-Project-4A6EB8?style=for-the-badge" alt="Mospolytech Project" height="20">
+    <br><br>
+    <h1>Mospolytech API</h1>
+</div>
 
 __Mospolytech API__ is an interface that provides Python developers with convenient tools for interacting with the internal services of the [Moscow Polytechnic University](https://mospolytech.ru/en/).
 
@@ -13,18 +17,18 @@ pip install -r /path/to/requirements.txt
 ```
 
 List of dependencies:
-> 1. requests==2.28.1
+1. requests==2.28.1
 
 ## Features
 
 The project is in development. But certain functions can already be used (they are checked in the list).
 
-> - [x] Getting a list of studying groups
-> - [ ] Getting information about the group based on the code name
-> - [x] Getting a list of students for the given groups
-> - [ ] Getting information about a particular student's visit to a university
-> - [x] Getting the group schedule in raw form
-> - [x] Getting the current group schedule based on raw data
+- [x] Getting a list of studying groups
+- [ ] Getting information about the group based on the code name
+- [x] Getting a list of students for the given groups
+- [ ] Getting information about a particular student's visit to a university
+- [x] Getting the group schedule in raw form
+- [x] Getting the current group schedule based on raw data
 
 ## Usage
 
