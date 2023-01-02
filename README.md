@@ -23,7 +23,9 @@ The project is in development. But certain functions can already be used (they a
 - [ ] Getting information about the group based on the code name
 - [x] Getting a list of students for the given groups
 - [ ] Getting information about a particular student's visit to a university
-- [x] Getting the group schedule in raw form
+- [ ] Getting the semester schedule of all groups in raw form
+- [x] Getting the group studying schedule in raw form
+- [ ] Getting the group session schedule in raw form
 - [x] Getting the current group schedule based on raw data
 
 ## Usage
