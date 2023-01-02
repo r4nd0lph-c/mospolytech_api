@@ -19,14 +19,14 @@ List of dependencies:
 
 The project is in development. But certain functions can already be used (they are checked in the list).
 
-- [x] Getting a list of studying groups
-- [ ] Getting information about the group based on the code name
-- [x] Getting a list of students for the given groups
-- [ ] Getting information about a particular student's visit to a university
-- [ ] Getting the semester schedule of all groups in raw form
-- [x] Getting the group studying schedule in raw form
-- [ ] Getting the group session schedule in raw form
-- [x] Getting the current group schedule based on raw data
+- [x] List of available groups
+- [ ] Information about group based on code-name
+- [x] List of students for all / specifed groups
+- [ ] Information about particular student's visit to university
+- [ ] Semester schedule of all groups in raw form
+- [x] Studying schedule for specifed group in raw form
+- [ ] Session schedule for specifed group in raw form
+- [x] Current studying / session schedule based on raw data
 
 ## Usage
 
