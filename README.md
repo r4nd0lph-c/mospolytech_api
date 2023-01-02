@@ -1,6 +1,5 @@
-<div align="center">
+<div>
     <img src="https://img.shields.io/badge/Mospolytech-Project-4A6EB8?style=for-the-badge" alt="Mospolytech Project" height="20">
-    <br><br>
     <h1>Mospolytech API</h1>
 </div>
 
