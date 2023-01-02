@@ -13,18 +13,18 @@ pip install -r /path/to/requirements.txt
 ```
 
 List of dependencies:
-1. requests==2.28.1
+> 1. requests==2.28.1
 
 ## Features
 
 The project is in development. But certain functions can already be used (they are checked in the list).
 
-- [x] Getting a list of studying groups
-- [ ] Getting information about the group based on the code name
-- [x] Getting a list of students for the given groups
-- [ ] Getting information about a particular student's visit to a university
-- [x] Getting the group schedule in raw form
-- [x] Getting the current group schedule based on raw data
+> - [x] Getting a list of studying groups
+> - [ ] Getting information about the group based on the code name
+> - [x] Getting a list of students for the given groups
+> - [ ] Getting information about a particular student's visit to a university
+> - [x] Getting the group schedule in raw form
+> - [x] Getting the current group schedule based on raw data
 
 ## Usage
 
@@ -186,3 +186,7 @@ with open("day.json", "w", encoding="utf-8") as f:
 ### More examples
 
 Examples of using all available functionality are in the file [usage.py](usage.py).
+
+## Contacts
+
+If necessary, use telegram ([@rand0lphc](https://t.me/rand0lphc)) to contact the repository creator.
