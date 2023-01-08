@@ -5,7 +5,7 @@
 # ██║╚██╔╝██║██║   ██║╚════██║██╔═══╝ ██║   ██║██║    ╚██╔╝     ██║   ██╔══╝  ██║     ██╔══██║    ██╔══██║██╔═══╝ ██║ #
 # ██║ ╚═╝ ██║╚██████╔╝███████║██║     ╚██████╔╝███████╗██║      ██║   ███████╗╚██████╗██║  ██║    ██║  ██║██║     ██║ #
 # ╚═╝     ╚═╝ ╚═════╝ ╚══════╝╚═╝      ╚═════╝ ╚══════╝╚═╝      ╚═╝   ╚══════╝ ╚═════╝╚═╝  ╚═╝    ╚═╝  ╚═╝╚═╝     ╚═╝ #
-# author: https://t.me/rand0lphc                                                                          version 3.0 #
+# author: https://t.me/rand0lphc                                                                          version 1.4 #
 # ------------------------------------------------------------------------------------------------------------------- #
 
 
@@ -41,6 +41,8 @@ class API:
         "referer": "https://rasp.dmami.ru/",
         "groups": "https://rasp.dmami.ru/groups-list.json",
         "students": "https://e.mospolytech.ru/old/lk_api_mapp.php",
+        "semester": "https://rasp.dmami.ru/semester.json",
+        "session": "https://rasp.dmami.ru/session-file.json",
         "schedule": "https://rasp.dmami.ru/site/group-html"
     }
     __HASH_SALT = "}{YWHksld#52673$3*9dNG"
@@ -111,6 +113,26 @@ class API:
         # returning created token (str object)
         return token.hexdigest()
 
+    def _make_request(self, r_url: str) -> dict:
+        """
+        ...
+        """
+
+        # making request
+        r = requests.get(url=r_url, headers=self.headers)
+
+        # checking status code
+        self.__check_status_code(r.status_code)
+
+        # decoding content
+        content = r.content.decode("utf-8")
+
+        # loading content to dict
+        data = json.loads(content)
+
+        # returning request data
+        return data
+
     def get_groups(self) -> list[str]:
         """
         DESCRIPTION
@@ -127,14 +149,7 @@ class API:
         """
 
         # making request
-        r_url = self.__URLS["groups"]
-        r = requests.get(url=r_url, headers=self.headers)
-
-        # checking status code
-        self.__check_status_code(r.status_code)
-
-        # loading content to dict
-        data = json.loads(r.content)
+        data = self._make_request(self.__URLS["groups"])
 
         # returning sorted list of group names
         return sorted([name for name in data["groups"]])
@@ -172,10 +187,12 @@ class API:
             r_url = self.__URLS["students"] + \
                 f"?group={group.replace(' ', '%20')}&token={token}"
             r = requests.get(url=r_url, headers=self.headers)
-            content = r.content.decode("utf-8")
 
             # checking status code
             self.__check_status_code(r.status_code)
+
+            # decoding content
+            content = r.content.decode("utf-8")
 
             # loading content to list of students
             list_students += json.loads(content)
@@ -183,13 +200,37 @@ class API:
         # returning sorted list of students
         return sorted(list_students)
 
-    def get_schedule(self, group: str) -> dict:
+    def get_semester(self) -> dict:
+        """
+        ...
+        """
+
+        # making request
+        data = self._make_request(self.__URLS["semester"])
+
+        # returning semester content
+        return data["contents"]
+
+    def get_session(self) -> dict:
+        """
+        ...
+        """
+
+        # making request
+        data = self._make_request(self.__URLS["session"])
+
+        # returning semester content
+        return data["contents"]
+
+    def get_schedule(self, group: str, is_session: bool = False) -> dict:
         """
         DESCRIPTION
             * returns a dict of the raw schedule;
 
         ARGS
             * (required) group (str): name of the group;
+            * (optional) is_session (bool): session flag,
+            default is False - try to get general schedule, True - try to get session schedule;
 
         RETURNS
             * raw_schedule (dict): dict containing raw schedule information;
@@ -200,7 +241,7 @@ class API:
 
         # making request
         r_url = self.__URLS["referer"] + \
-            f"site/group?group={group.replace(' ', '%20')}"
+            f"site/group?group={group.replace(' ', '%20')}&session={1 if is_session else 0}"
         r = requests.get(url=r_url, headers=self.headers)
 
         # checking status code
@@ -231,6 +272,7 @@ class API:
         raw_schedule = {
             "group": group,
             "type": "evening" if data["group"]["evening"] else "morning",
+            "is_session": is_session,
             "dates": [".".join(d.split("-")[::-1]) for d in [data["group"]["dateFrom"], data["group"]["dateTo"]]],
             "grid": []
         }
@@ -257,6 +299,7 @@ class API:
                         "rooms": [r.strip() for r in raw_sbj["shortRooms"]],
                         "dates": dates
                     }
+                    # TODO: remove "" from arrays
                     pair["subjects"].append(sbj)
                 day.append(pair)
             raw_schedule["grid"].append(day)

@@ -1,4 +1,4 @@
-# Usage examples | version 3.0
+# Usage examples | version 1.4
 
 
 import json
@@ -22,13 +22,43 @@ if __name__ == "__main__":
     ])
     print(f"\n\nSTUDENTS:\n{list_students}\n\nCOUNT:\n{len(list_students)}")
 
-    # getting raw shedule of specified group
-    raw_schedule = api.get_schedule("201-721")
-    print(f"\n\nSCHEDULE:\n{raw_schedule}")
+    # getting a global semester schedule
+    semester_schedule = api.get_semester()
+    print(f"\n\nSEMESTER:\n{semester_schedule}")
 
-    # saving raw_schedule to JSON file
-    with open("raw_schedule.json", "w", encoding="utf-8") as f:
-        json.dump(raw_schedule, f, ensure_ascii=False, indent=4)
+    # saving global semester schedule to JSON file
+    with open("semester_schedule.json", "w", encoding="utf-8") as f:
+        json.dump(semester_schedule, f, ensure_ascii=False, indent=4)
+
+    # getting a global session schedule
+    session_schedule = api.get_session()
+    print(f"\n\nSESSION:\n{session_schedule}")
+
+    # saving global session schedule to JSON file
+    with open("session_schedule.json", "w", encoding="utf-8") as f:
+        json.dump(session_schedule, f, ensure_ascii=False, indent=4)
+
+    try:
+        # getting raw shedule (semester) of specified group
+        raw_schedule = api.get_schedule("201-721")
+        print(f"\n\nSEMESTER SCHEDULE:\n{raw_schedule}")
+
+        # saving raw_schedule to JSON file
+        with open("raw_schedule_semester.json", "w", encoding="utf-8") as f:
+            json.dump(raw_schedule, f, ensure_ascii=False, indent=4)
+    except ValueError as e:
+        print(e.args)
+
+    try:
+        # getting raw shedule (session) of specified group
+        raw_schedule = api.get_schedule("201-721", is_session=True)
+        print(f"\n\nSESSION SCHEDULE:\n{raw_schedule}")
+
+        # saving raw_schedule to JSON file
+        with open("raw_schedule_session.json", "w", encoding="utf-8") as f:
+            json.dump(raw_schedule, f, ensure_ascii=False, indent=4)
+    except ValueError as e:
+        print(e.args)
 
     # Group object initialization
     group_obj = Group()
@@ -37,11 +67,14 @@ if __name__ == "__main__":
     # ...
     # ...
 
+    # getting raw shedule (session) of specified group
+    raw_schedule = api.get_schedule("201-721", is_session=True)
+
     # Schedule object initialization
     schedule_obj = Schedule(raw_schedule)
 
     # getting schedule on specified day
-    day = schedule_obj.get_day("12.12.2022")
+    day = schedule_obj.get_day("09.01.2023")
     print(f"\n\nGROUP {schedule_obj.group}, DAY {day['date']}:\n{day['body']}")
 
     # saving day to JSON file
