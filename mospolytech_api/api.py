@@ -27,6 +27,8 @@ class API:
     ARGS
         * (optional) user_agent (str): string that lets servers identify application,
         by default is __DEFAULT_USER_AGENT
+        * (optional) hash_salt_path (str): string that is required for some requests,
+        by default is __DEFAULT_HASH_SALT_PATH
     -----
     METHODS
         * get_groups() -> list[str]
@@ -78,7 +80,7 @@ class API:
 
         # setting hash salt
         with open(hash_salt_path, "r", encoding="utf-8") as f:
-            self.__HASH_SALT = f.readline()
+            self.__hash_salt = f.readline()
 
     @staticmethod
     def __check_status_code(code: int) -> None:
@@ -116,7 +118,7 @@ class API:
         """
 
         # creating token (md5-hash object)
-        string = group + self.__HASH_SALT
+        string = group + self.__hash_salt
         token = md5(md5(string.encode()).hexdigest().encode())
 
         # returning token (md5-str object) for given group
