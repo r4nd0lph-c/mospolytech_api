@@ -1,0 +1,11 @@
+# ignore .idea
+.idea/
+
+# ignore venv
+venv/
+
+# ignore cache
+mospolytech_api/__pycache__
+
+# ignore hash salt
+hash_salt.txt
