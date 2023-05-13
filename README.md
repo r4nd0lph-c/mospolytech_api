@@ -21,11 +21,10 @@ List of dependencies:
 
 ## Features
 
-The following functions are available for use (they are checked in the list):
+The following functions are available for use:
 
 - [x] Sorted list of groups
-- [ ] Information about group based on code-name
-- [x] Sorted list of students all / given groups
+- [x] Sorted dict of students all / given groups
 - [x] Semester schedule of all groups
 - [x] Session schedule of all groups
 - [x] Schedule (general / session) for given group
@@ -51,20 +50,48 @@ groups = api.get_groups()
 # groups = ["181-111", "181-112", "181-113", ..., "22А-531", "22А-811", "22А-812"]
 ```
 
-### Getting sorted list of students
+### Getting sorted dict of students
 
 ```python
 # all groups
 students = api.get_students()
-# students = ["Amy Curtis Laurence", "Elizabeth March", ..., "Josephine Bhaer"]
 
 # given groups
 students = api.get_students([
     "201-721", "201-722", "201-723",
     "201-724", "201-725", "201-726"
 ])
-# students = ["Amy Curtis Laurence", "Elizabeth March", ..., "Josephine Bhaer"]
+
+# saving students to JSON file
+save("students", students)
 ```
+
+<details> <summary> Check students.json </summary>
+
+```javascript
+// students.json
+
+{
+    ...,
+    "201-721": [
+        {
+            "guid": "bb85cb84-d7e3-11ea-80b0-fe3e130bd8ea",
+            "student": "Amy Curtis Laurence"
+        },
+        {
+            "guid": "8d2ba767-d559-11eb-80d0-fe3e120bd9ea",
+            "student": "Elizabeth March"
+        },
+        {
+            "guid": "5e376b82-dba7-12ea-40b0-fe3e120db9ea",
+            "student": "Josephine Bhaer"
+        },
+        ...
+    ],
+    ...
+}
+```
+</details>
 
 ### Getting semester schedule of all groups
 
@@ -72,8 +99,7 @@ students = api.get_students([
 semester = api.get_semester()
 
 # saving semester to JSON file
-with open("semester.json", "w", encoding="utf-8") as f:
-    json.dump(semester, f, ensure_ascii=False, indent=4)
+save("semester", semester)
 ```
 
 <details> <summary> Check semester.json </summary>
@@ -134,8 +160,7 @@ with open("semester.json", "w", encoding="utf-8") as f:
 session = api.get_session()
 
 # saving session to JSON file
-with open("session.json", "w", encoding="utf-8") as f:
-    json.dump(session, f, ensure_ascii=False, indent=4)
+save("session", session)
 ```
 
 <details> <summary> Check session.json </summary>
@@ -196,8 +221,7 @@ with open("session.json", "w", encoding="utf-8") as f:
 schedule = api.get_schedule(group="201-721", is_session=False)
 
 # saving schedule to JSON file
-with open("schedule.json", "w", encoding="utf-8") as f:
-    json.dump(schedule, f, ensure_ascii=False, indent=4)
+save("schedule", schedule)
 ```
 
 <details> <summary> Check schedule.json </summary>
@@ -263,8 +287,7 @@ schedule = Schedule(schedule)
 day = schedule.get_day("01.02.2023")
 
 # saving day to JSON file
-with open("day.json", "w", encoding="utf-8") as f:
-    json.dump(day, f, ensure_ascii=False, indent=4)
+save("day", day)
 ```
 
 <details> <summary> Check day.json </summary>
@@ -332,8 +355,7 @@ with open("day.json", "w", encoding="utf-8") as f:
 week = schedule.get_week("01.02.2023")
 
 # saving week to JSON file
-with open("week.json", "w", encoding="utf-8") as f:
-    json.dump(week, f, ensure_ascii=False, indent=4)
+save("week", week)
 ```
 
 <details> <summary> Check week.json </summary>
