@@ -27,10 +27,9 @@ if __name__ == "__main__":
     print(f"STUDENTS ({len(students)}):\n{students}\n\n")
 
     # sorted list of students (given groups)
-    students = api.get_students([
-        "201-721", "201-722", "201-723",
-        "201-724", "201-725", "201-726"
-    ])
+    students = api.get_students(
+        ["201-721", "201-722", "201-723", "201-724", "201-725", "201-726"]
+    )
     # printing sorted list of students
     print(f"STUDENTS ({len(students)}):\n{students}\n\n")
 
