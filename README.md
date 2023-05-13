@@ -52,6 +52,8 @@ groups = api.get_groups()
 
 ### Getting sorted dict of students
 
+Make sure you have the hash salt (written to the file hash_salt.txt by default)
+
 ```python
 # all groups
 students = api.get_students()
