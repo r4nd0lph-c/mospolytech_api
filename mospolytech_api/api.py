@@ -32,7 +32,7 @@ class API:
     -----
     METHODS
         * get_groups() -> list[str]
-        * get_students(groups: list = None) -> list[str]
+        * get_students(groups: list = None) -> dict
         * get_semester() -> dict
         * get_session() -> dict
         * get_schedule(group: str, is_session: bool = False) -> dict
@@ -235,17 +235,17 @@ class API:
         # returning sorted list of group names
         return sorted([name for name in data["groups"]])
 
-    def get_students(self, groups: list = None) -> list[str]:
+    def get_students(self, groups: list = None) -> dict:
         """
         DESCRIPTION
-            * gets sorted list of students for given groups and returns it
+            * gets sorted dict of students for given groups and returns it
         -----
         ARGS
             * (optional) groups (list[str]): sorted list of group names,
             by default is None - search across all groups
         -----
         RETURNS
-            * students (list[str]): sorted list of students for given groups
+            * students (dict): sorted dict of students for given groups
         -----
         ERRORS
             * ConnectionError(): if there is problem with connection
@@ -256,8 +256,8 @@ class API:
             groups = self.get_groups()
 
         # creating students
-        students = []
-        for group in groups:
+        students = {}
+        for group in sorted(groups):
             # creating token
             token = self.__create_token(group)
             # making complex request
@@ -266,11 +266,14 @@ class API:
                 + f"?group={group.replace(' ', '%20')}&token={token}"
             )
             batch = json.loads(self.__make_request(url))
-            # adding batch to list of students
-            students += batch
+            batch = sorted(batch, key=lambda item: item["fio"])
+            # adding batch to dict of students
+            students[group] = [
+                {"guid": item["guid"], "student": item["fio"]} for item in batch
+            ]
 
-        # returning sorted list of students for given groups
-        return sorted(students)
+        # returning sorted dict of students for given groups
+        return students
 
     def get_semester(self) -> dict:
         """
